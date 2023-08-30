@@ -1,7 +1,7 @@
 class School {
   directions: any = [];
 
-  addDirection(direction: any) {
+  addDirection(direction: any): void {
     this.directions.push(direction);
   }
 }
@@ -18,7 +18,7 @@ class Direction {
     this._name = name;
   }
 
-  addLevel(level: any) {
+  addLevel(level: any): void {
     this.levels.push(level);
   }
 }
@@ -98,15 +98,15 @@ class Student {
     return new Date().getFullYear() - this.birthYear;
   }
 
-  setGrade(subject: string, grade: number) {
+  setGrade(subject: string, grade: number): void {
     this.grades[subject] = grade;
   }
 
-  markAttendance(present: number) {
+  markAttendance(present: number): void {
     this.attendance.push(present);
   }
 
-  getPerformanceRating() {
+  getPerformanceRating(): number {
     const gradeValues = Object.values(this.grades);
 
     if (gradeValues.length === 0) return 0;
