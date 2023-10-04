@@ -51,7 +51,7 @@ class Group {
   directionName: string;
   levelName: string;
 
-  get students(): string {
+  get students(): any {
     return this._students;
   }
 
@@ -64,10 +64,9 @@ class Group {
     this._students.push(student);
   }
 
-  showPerformance(): number {
-    const sortedStudents: number = this.students.toSorted(
-      (a: number, b: number) =>
-        b.getPerformanceRating() - a.getPerformanceRating()
+  showPerformance(): any {
+    const sortedStudents: any = this.students.toSorted(
+      (a: any, b: any) => b.getPerformanceRating() - a.getPerformanceRating()
     );
 
     return sortedStudents;
@@ -99,11 +98,11 @@ class Student {
     return new Date().getFullYear() - this.birthYear;
   }
 
-  setGrade(subject: any, grade: any): void {
+  setGrade(subject: string, grade: any): void {
     this.grades[subject] = grade;
   }
 
-  markAttendance(present: any): void {
+  markAttendance(present: number): void {
     this.attendance.push(present);
   }
 
