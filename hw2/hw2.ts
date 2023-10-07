@@ -1,4 +1,4 @@
-type Lecturer = {
+type LecturerPersonalInfo = {
   name: string;
   surname: string;
   position: string;
@@ -8,23 +8,23 @@ type Lecturer = {
   contacts: string;
 };
 
-type Grade = { workName: string; mark: number };
+type StudentGrades = { workName: string; mark: number };
 
-type Visit = { lesson: string; present: boolean };
+type StudentVisits = { lesson: string; present: boolean };
 
-type Students = {
+type StudentPersonalInfo = {
   _firstName: string;
   _lastName: string;
   _birthYear: number;
 };
 
-enum Levels {
+enum LevelGroup {
   Beginner,
   Intermediate,
   Advanced,
 }
 
-enum Status {
+enum StatusStudent {
   Active,
   Inactive,
 }
@@ -32,13 +32,13 @@ enum Status {
 class School {
   // implement 'add area', 'remove area', 'add lecturer', and 'remove lecturer' methods
   _areas: Area[] = [];
-  _lecturers: Lecturer[] = []; // Name, surname, position, company, experience, courses, contacts
+  _lecturers: LecturerPersonalInfo[] = []; // Name, surname, position, company, experience, courses, contacts
 
   get areas(): Area[] {
     return this._areas;
   }
 
-  get lecturers(): Lecturer[] {
+  get lecturers(): LecturerPersonalInfo[] {
     return this._lecturers;
   }
 
@@ -53,11 +53,11 @@ class School {
     }
   }
 
-  addLecturer(lecturer: Lecturer): void {
+  addLecturer(lecturer: LecturerPersonalInfo): void {
     this._lecturers.push(lecturer);
   }
 
-  removeLecturer(lecturer: Lecturer): void {
+  removeLecturer(lecturer: LecturerPersonalInfo): void {
     const index = this._lecturers.indexOf(lecturer);
     if (index !== -1) {
       this._lecturers.splice(index, 1);
@@ -97,10 +97,10 @@ class Area {
 class Level {
   // implement getters for fields and 'add/remove group' methods
   _groups: Group[] = [];
-  _name: Levels;
+  _name: LevelGroup;
   _description: string;
 
-  constructor(name: Levels, description: string) {
+  constructor(name: LevelGroup, description: string) {
     this._name = name;
     this._description = description;
   }
@@ -109,7 +109,7 @@ class Level {
     return this._groups;
   }
 
-  get name(): Levels {
+  get name(): LevelGroup {
     return this._name;
   }
 
@@ -132,12 +132,12 @@ class Level {
 class Group {
   // implement getters for fields and 'add/remove student' and 'set status' methods
   _area: Area[] = [];
-  _status: Status;
+  _status: StatusStudent;
   _students: Student[] = []; // Modify the array so that it has a valid toSorted method*
   _directionName: string;
   _levelName: string;
 
-  constructor(status: Status, directionName: string, levelName: string) {
+  constructor(status: StatusStudent, directionName: string, levelName: string) {
     this._status = status;
     this._directionName = directionName;
     this._levelName = levelName;
@@ -147,15 +147,15 @@ class Group {
     return this._area;
   }
 
-  get status(): Status {
+  get status(): StatusStudent {
     return this._status;
   }
 
-  set status(value: Status) {
+  set status(value: StatusStudent) {
     this._status = value;
   }
 
-  get student(): Student[] {
+  get students(): Student[] {
     return this._students;
   }
 
@@ -168,7 +168,7 @@ class Group {
   }
 
   addStudent(student: Student): void {
-    this.student.push(student);
+    this._students.push(student);
   }
 
   remmoveStudent(student: Student): void {
@@ -189,11 +189,11 @@ class Group {
 
 class Student {
   // implement 'set grade' and 'set visit' methods
-  _grades: Grade[] = []; // workName: mark
-  _visits: Visit[] = []; // lesson: present
-  _student: Students;
+  _grades: StudentGrades[] = []; // workName: mark
+  _visits: StudentVisits[] = []; // lesson: present
+  _student: StudentPersonalInfo;
 
-  constructor(student: Students) {
+  constructor(student: StudentPersonalInfo) {
     this._student = student;
   }
 
@@ -209,24 +209,26 @@ class Student {
     return new Date().getFullYear() - this._student._birthYear;
   }
 
-  setGrade(grade: Grade): void {
+  setGrade(grade: StudentGrades): void {
     this._grades.push(grade);
   }
 
-  setVisit(visit: Visit): void {
+  setVisit(visit: StudentVisits): void {
     this._visits.push(visit);
   }
 
   getPerformanceRating(): number {
-    const gradeValues: Grade[] = Object.values(this._grades);
+    const gradeValues: StudentGrades[] = Object.values(this._grades);
 
     if (!gradeValues.length) return 0;
 
     const averageGrade: number =
-      gradeValues.reduce((sum: number, grade: Grade) => sum + grade.mark, 0) /
-      gradeValues.length;
+      gradeValues.reduce(
+        (sum: number, grade: StudentGrades) => sum + grade.mark,
+        0
+      ) / gradeValues.length;
     const attendancePercentage: number =
-      (this._visits.filter((present: Visit) => present.present).length /
+      (this._visits.filter((present: StudentVisits) => present.present).length /
         this._visits.length) *
       100;
 
