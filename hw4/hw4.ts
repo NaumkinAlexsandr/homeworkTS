@@ -14,18 +14,8 @@ console.log(person);
 
 // ------------------------------------ Task №2
 
-type Types =
-  | string
-  | number
-  | boolean
-  | object
-  | any
-  | unknown
-  | null
-  | undefined;
-
 interface IGreet {
-  [key: string]: (arg: Types, arg2: Types) => void;
+  [key: string]: (arg: any, arg2: any) => void;
 }
 
 const sayHello: IGreet = {
@@ -34,24 +24,20 @@ const sayHello: IGreet = {
   },
 };
 
-console.log(sayHello.greet("John Lennon", 30));
+if ("greet" in sayHello) {
+  console.log(sayHello["greet"]("John Lennon", 30));
+} else {
+  console.log("Method not found");
+}
 
 // ------------------------------------ Task №3
 
 interface IUsers {
-  [key: number]:
-    | string
-    | {
-        name: string;
-        age: number;
-      }[];
+  [key: number]: {
+    name: string;
+    age: number;
+  }[];
 }
-
-const users: IUsers = {
-  0: "John",
-  1: "Jane",
-  2: "Bob",
-};
 
 const users2: IUsers = {
   0: [
@@ -71,13 +57,12 @@ const users2: IUsers = {
   ],
 };
 
-console.log(users[1]);
 console.log(users2[2]);
 
 // ------------------------------------ Task №4
 
 interface IUser {
-  [key: string]: Types;
+  [key: string]: any;
   name: string;
 }
 
@@ -103,7 +88,7 @@ interface IAnimals {
 }
 
 interface IPets extends IAnimals {
-  [key: string]: Types;
+  [key: string]: any;
   voice: string;
 }
 
