@@ -18,11 +18,11 @@ const john: ReadonlyPerson = {
 
 // -------------------------------------------- №2
 
-type DeepRequireReadonly<T> = {
-  readonly [K in keyof T]: T[K] extends object
-    ? DeepRequireReadonly<T[K]>
-    : T[K];
-};
+type DeepRequireReadonly<T> = T extends object
+  ? {
+      readonly [K in keyof T]-?: T[K];
+    }
+  : T;
 
 type RequirePerson = DeepRequireReadonly<Person>;
 
@@ -77,10 +77,12 @@ console.log(pete.age.value);
 
 // -------------------------------------------- №6
 
-type ArrayElement<T extends any[]> = T extends (infer U)[] ? U : never;
+type ArrayElement<T> = T extends (infer U)[] ? U : never;
 
-function getFirstElement(arr: number[]): number {
+function getFirstElement<T>(arr: T[]): T {
   return arr[0];
 }
 
-type FirstElement = ArrayElement<Parameters<typeof getFirstElement>>; // number
+const arrayNumber: number[] = [1, 2, 3];
+const firstElement = getFirstElement(arrayNumber);
+console.log(firstElement);
