@@ -1,11 +1,15 @@
 // Нотатки бувають двох типів. Дефолтні та такі, які вимагають підтвердження при ридагуванні.
+enum TodoTypes {
+  Important,
+  Unimportant,
+}
 
 interface INote {
   id: number;
   title: Context;
   text: Context;
   complited: boolean;
-  important: boolean;
+  importance: TodoTypes;
 }
 
 interface INoteWithTime extends INote {
@@ -28,7 +32,7 @@ type NoteEdit = <T extends INoteWithTime, K extends Context>(
   id: number,
   title: Context,
   text: Context,
-  important: boolean
+  importance: TodoTypes
 ) => void;
 
 type NoteComplited = <T extends INoteWithTime, K>(
@@ -92,7 +96,7 @@ class TodoList extends NotesMethods {
       title,
       text,
       complited: false,
-      important: false,
+      importance: TodoTypes.Unimportant,
       dateOfCreation: new Date(),
     };
 
@@ -113,17 +117,19 @@ class TodoList extends NotesMethods {
     id: number,
     title: Context,
     text: Context,
-    important: boolean
+    importance: TodoTypes
   ) => {
     const note = this.getNoteById(id);
 
     if (note) {
-      if (note.important === true) {
-        const confirmed = confirm("Are you sure you want to edit this note?");
+      if (importance === TodoTypes.Important) {
+        const confirmed: boolean = window.confirm(
+          "Are you sure you want to edit this note?"
+        );
         if (confirmed) {
           note.title = title;
           note.text = text;
-          note.important = important;
+          note.importance = importance;
         }
       } else {
         note.title = title;
@@ -142,9 +148,10 @@ const note2 = todoList.addNote("Note 2", "This is note 2");
 const note3 = todoList.addNote("Note 3", "This is note 3");
 
 note1.complited = true;
+// note1.importance = 0;
 
-// todoList.deleteNote(2);
-// todoList.editNote(1, "New note 1", "This is new note 1", false);
+// // todoList.deleteNote(2);
+// todoList.editNote(1, "New note 1", "This is new note 1", 0);
 // console.log(todoList.getNoteById(1));
 // console.log(todoList.sortNotesByComplited());
 // console.log(todoList.findeNoteByTitle("This is note 3"));
