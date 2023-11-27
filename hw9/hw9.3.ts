@@ -1,6 +1,6 @@
 interface IGeometricFigure {
   color: string;
-
+  name: string;
   getArea(): number;
 }
 
@@ -19,13 +19,17 @@ interface ITriangle extends IGeometricFigure {
 }
 
 abstract class Shape implements IGeometricFigure {
-  constructor(public color: string) {}
+  constructor(public color: string, public name: string) {}
   abstract getArea(): number;
 }
 
 class Circle extends Shape implements ICircle {
-  constructor(public color: string, public radius: number) {
-    super(color);
+  constructor(
+    public name: string,
+    public color: string,
+    public radius: number
+  ) {
+    super(color, name);
   }
 
   getArea(): number {
@@ -35,11 +39,12 @@ class Circle extends Shape implements ICircle {
 
 class Rectangle extends Shape implements IRectangle {
   constructor(
+    public name: string,
     public color: string,
     public height: number,
     public width: number
   ) {
-    super(color);
+    super(color, name);
   }
 
   getArea(): number {
@@ -49,11 +54,12 @@ class Rectangle extends Shape implements IRectangle {
 
 class Triangle extends Shape implements ITriangle {
   constructor(
+    public name: string,
     public color: string,
     public height: number,
     public width: number
   ) {
-    super(color);
+    super(color, name);
   }
 
   getArea(): number {
@@ -61,11 +67,14 @@ class Triangle extends Shape implements ITriangle {
   }
 }
 
-const circle = new Circle("blue", 50);
-console.log(`Circle area ${circle.getArea()}`);
+function printArea(figure: IGeometricFigure): void {
+  console.log(`${figure.name} area: ${figure.getArea()}`);
+}
 
-const rectangle = new Rectangle("red", 50, 50);
-console.log(`Rectangle area ${rectangle.getArea()}`);
+const circle = new Circle("Circle", "blue", 50);
+const rectangle = new Rectangle("Rectangle", "red", 50, 50);
+const triangle = new Triangle("Triangle", "black", 50, 50);
 
-const triangle = new Triangle("black", 50, 50);
-console.log(`Triangle area ${triangle.getArea()}`);
+printArea(circle);
+printArea(rectangle);
+printArea(triangle);

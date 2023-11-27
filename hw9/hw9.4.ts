@@ -24,29 +24,48 @@ interface ITask {
   executor: IUser;
 }
 
-interface ITaskService {
+interface ICreateTask {
   createTask(title: string, executor: IUser): ITask;
+}
+
+interface IAssignTask {
   assignTask(task: ITask, executor: IUser): void;
+}
+
+interface ICompleteTask {
   completeTask(task: ITask): void;
 }
 
-class Developer implements IUser {
+class Developer implements IUser, ICompleteTask {
   constructor(
     public id: number,
     public name: string,
     public position: UserPosition.DEVELOPER
   ) {}
+
+  completeTask(task: ITask): void {
+    task.status = TaskStatus.COMPLETED;
+  }
 }
 
-class Manager implements IUser {
+class Manager implements IUser, IAssignTask, ICompleteTask {
   constructor(
     public id: number,
     public name: string,
     public position: UserPosition.MANAGER
   ) {}
+
+  assignTask(task: ITask, executor: IUser): void {
+    task.executor = executor;
+    task.status = TaskStatus.IN_PROGRESS;
+  }
+
+  completeTask(task: ITask): void {
+    task.status = TaskStatus.COMPLETED;
+  }
 }
 
-class TaskService implements ITaskService {
+class TaskService implements ICreateTask, IAssignTask, ICompleteTask {
   tasks: ITask[] = [];
   counter = 1;
   createTask(title: string, executor: IUser): ITask {
@@ -78,8 +97,11 @@ const taskService = new TaskService();
 const task1 = taskService.createTask("First task", developer);
 const task2 = taskService.createTask("Second Task", developer);
 const task3 = taskService.createTask("Third Task", manager);
-taskService.assignTask(task2, developer);
-taskService.completeTask(task3);
+
+taskService.assignTask(task1, developer);
+manager.assignTask(task2, developer);
+manager.assignTask(task3, manager);
+developer.completeTask(task2);
 
 console.log(task1);
 console.log(task2);

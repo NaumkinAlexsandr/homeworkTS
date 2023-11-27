@@ -57,12 +57,19 @@ class Library implements ILibrary {
 
   borrowBook(title: string): void {
     const book = this.books.find((book) => book.title === title);
+
     if (book) {
       if (book.status === StatusBook.IsAvailable) {
         book.status = StatusBook.NotAvailable;
-        console.log(`Книга "${book.getTitle()}" була узята з бібліотеки.`);
+        console.log(
+          `Книга "${book.getTitle()}" була узята з бібліотеки ${user.name}.`
+        );
       } else {
-        console.log(`Книга "${book.getTitle()}" вже зайнята.`);
+        console.log(
+          `Книга "${book.getTitle()}" вже зайнята. Вона знаходиться у ${
+            user.name
+          }`
+        );
       }
     } else {
       console.log(`Книга з назвою "${title}" не знайдена в бібліотеці.`);
@@ -119,6 +126,8 @@ library.addNewBook("Захар Беркут 2", "Іван Франко", 0);
 // console.log(library);
 
 console.log(user.borrowBook("Кобзар")); // ok
-console.log(user.returnBook("Кобзар")); // ok
+console.log(library.borrowBook("Кобзар")); // ok
+
+// console.log(user.returnBook("Кобзар")); // ok
 
 console.log(library);

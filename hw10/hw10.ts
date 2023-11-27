@@ -6,7 +6,12 @@ interface IPlayer {
   previous(): void;
 }
 
-class AudioPlaylist {
+interface IPlaylist {
+  add(track: string): void;
+  remove(track: string): void;
+}
+
+class AudioPlaylist implements IPlaylist {
   tracks: string[];
 
   constructor() {
@@ -15,10 +20,17 @@ class AudioPlaylist {
 
   add(track: string) {
     this.tracks.push(track);
+  }
+
+  remove(track: string) {
+    const index = this.tracks.indexOf(track);
+    if (index !== -1) {
+      this.tracks.splice(index, 1);
+    }
   }
 }
 
-class VideoPlaylist {
+class VideoPlaylist implements IPlaylist {
   tracks: string[];
 
   constructor() {
@@ -27,91 +39,98 @@ class VideoPlaylist {
 
   add(track: string) {
     this.tracks.push(track);
+  }
+
+  remove(track: string) {
+    const index = this.tracks.indexOf(track);
+    if (index !== -1) {
+      this.tracks.splice(index, 1);
+    }
   }
 }
 
 class AudioPlayer implements IPlayer {
-  private audioElement: HTMLAudioElement;
+  private audioTrack: HTMLAudioElement;
   private playlist: AudioPlaylist;
   private currentTrackIndex: number;
   constructor(playlist: AudioPlaylist) {
-    this.audioElement = document.createElement("audio");
+    this.audioTrack = document.createElement("audio");
     this.playlist = playlist;
     this.currentTrackIndex = 0;
   }
   play(): void {
-    this.audioElement.play();
+    this.audioTrack.play();
     console.log("Playing audio");
   }
 
   pause(): void {
-    this.audioElement.pause();
+    this.audioTrack.pause();
     console.log("Pausing audio");
   }
 
   stop(): void {
-    this.audioElement.currentTime = 0;
-    this.audioElement.pause();
+    this.audioTrack.currentTime = 0;
+    this.audioTrack.pause();
     console.log("Stopping audio");
   }
 
   next(): void {
     this.currentTrackIndex =
       (this.currentTrackIndex + 1) % this.playlist.tracks.length;
-    this.audioElement.src = this.playlist.tracks[this.currentTrackIndex];
+    this.audioTrack.src = this.playlist.tracks[this.currentTrackIndex];
     this.play();
-    console.log("Next track");
+    console.log("Next audio track");
   }
 
   previous(): void {
     this.currentTrackIndex =
       (this.currentTrackIndex - 1) % this.playlist.tracks.length;
-    this.audioElement.src = this.playlist.tracks[this.currentTrackIndex];
+    this.audioTrack.src = this.playlist.tracks[this.currentTrackIndex];
     this.play();
-    console.log("Previous track");
+    console.log("Previous audio track");
   }
 }
 
 class VideoPlayer {
-  private videoElement: HTMLVideoElement;
+  private videoTrack: HTMLVideoElement;
   private playlist: VideoPlaylist;
   private currentTrackIndex: number;
 
   constructor(playlist: VideoPlaylist) {
-    this.videoElement = document.createElement("video");
+    this.videoTrack = document.createElement("video");
     this.playlist = playlist;
     this.currentTrackIndex = 0;
   }
   play(): void {
-    this.videoElement.play();
+    this.videoTrack.play();
     console.log("Playing video");
   }
 
   pause(): void {
-    this.videoElement.pause();
+    this.videoTrack.pause();
     console.log("Pausing video");
   }
 
   stop(): void {
-    this.videoElement.currentTime = 0;
-    this.videoElement.pause();
+    this.videoTrack.currentTime = 0;
+    this.videoTrack.pause();
     console.log("Stopping video");
   }
 
   next(): void {
     this.currentTrackIndex =
       (this.currentTrackIndex + 1) % this.playlist.tracks.length;
-    this.videoElement.src = this.playlist.tracks[this.currentTrackIndex];
+    this.videoTrack.src = this.playlist.tracks[this.currentTrackIndex];
     this.play();
-    console.log("Next video");
+    console.log("Next video track");
   }
 
   previous(): void {
     this.currentTrackIndex =
       (this.currentTrackIndex - 1) % this.playlist.tracks.length;
-    this.videoElement.src = this.playlist.tracks[this.currentTrackIndex];
+    this.videoTrack.src = this.playlist.tracks[this.currentTrackIndex];
     this.play();
-    console.log("Previous video");
+    console.log("Previous video track");
   }
 }
 
@@ -179,4 +198,4 @@ const videoPlayer = new VideoPlayer(playlistVideo);
 const multimediaPlayer = new MultimediaPlayer(audioPlayer, videoPlayer);
 
 console.log(playlistAudio);
-console.log(playlistVideo);
+console.log(playlistVideo.tracks[1]);
