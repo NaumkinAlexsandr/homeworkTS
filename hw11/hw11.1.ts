@@ -1,26 +1,38 @@
 interface ICurrency {
   name: string;
   code: string;
+  symbol: string;
   exchangeRate: number;
 }
 
 interface ICurrencyConverter {
-  amountOne: number;
+  amount: number;
   exchangeRateOne: number;
   exchangeRateTwo: number;
   code: string;
   convert(): string;
 }
 
+interface INewCurrencyConverter {
+  amount: number;
+  exchangeRateOne: number;
+  exchangeRateTwo: number;
+  symbolOne: string;
+  symbolTwo: string;
+  newConvert(): string;
+}
+
 class USDCurrency implements ICurrency {
   name: string;
   code: string;
+  symbol: string;
   exchangeRate: number;
 
   constructor() {
     this.name = "US Dollar";
     this.code = "USD";
-    this.exchangeRate = 1;
+    this.symbol = "$";
+    this.exchangeRate = 0.9;
   }
   getCurrencyName(): string {
     return this.name;
@@ -28,6 +40,10 @@ class USDCurrency implements ICurrency {
 
   getCurrencyCode(): string {
     return this.code;
+  }
+
+  getCurrencySymbol(): string {
+    return this.symbol;
   }
 
   getCurrencyExchangeRate(): number {
@@ -38,11 +54,13 @@ class USDCurrency implements ICurrency {
 class EuroCurrency implements ICurrency {
   name: string;
   code: string;
+  symbol: string;
   exchangeRate: number;
   constructor() {
     this.name = "Euro";
     this.code = "EUR";
-    this.exchangeRate = 0.85;
+    this.symbol = "€";
+    this.exchangeRate = 1;
   }
   getCurrencyName(): string {
     return this.name;
@@ -52,6 +70,10 @@ class EuroCurrency implements ICurrency {
     return this.code;
   }
 
+  getCurrencySymbol(): string {
+    return this.symbol;
+  }
+
   getCurrencyExchangeRate(): number {
     return this.exchangeRate;
   }
@@ -59,27 +81,45 @@ class EuroCurrency implements ICurrency {
 
 class CurrencyConverter implements ICurrencyConverter {
   constructor(
-    public amountOne: number,
+    public amount: number,
     public exchangeRateOne: number,
     public exchangeRateTwo: number,
     public code: string
   ) {}
-  convert() {
+  convert(): string {
     const convertedAmount =
-      this.amountOne * this.exchangeRateOne * this.exchangeRateTwo;
+      this.amount * this.exchangeRateOne * this.exchangeRateTwo;
     return `${convertedAmount} ${this.code}`;
   }
 }
 
+class NewCurrencyConverter implements INewCurrencyConverter {
+  constructor(
+    public amount: number,
+    public exchangeRateOne: number,
+    public exchangeRateTwo: number,
+    public symbolOne: string,
+    public symbolTwo: string
+  ) {}
+  newConvert(): string {
+    const newConvertedAmount =
+      (this.exchangeRateOne / this.exchangeRateTwo) * this.amount;
+    return `If you exchange ${this.symbolOne} ${
+      this.amount
+    }, you will receive ${this.symbolTwo} ${newConvertedAmount.toFixed(2)}`;
+  }
+}
+
 class CurrencyAdapter implements ICurrency {
-  private currencyConverter: CurrencyConverter;
+  private currencyConverter: NewCurrencyConverter;
 
   constructor(private currency: ICurrency, private getCurrency: ICurrency) {
-    this.currencyConverter = new CurrencyConverter(
+    this.currencyConverter = new NewCurrencyConverter(
       1,
       currency.exchangeRate,
       getCurrency.exchangeRate,
-      getCurrency.code
+      currency.symbol,
+      getCurrency.symbol
     );
   }
 
@@ -91,13 +131,17 @@ class CurrencyAdapter implements ICurrency {
     return this.currency.code;
   }
 
+  get symbol(): string {
+    return this.currency.symbol;
+  }
+
   get exchangeRate(): number {
     return this.currency.exchangeRate;
   }
 
-  convert(amount: number): string {
-    this.currencyConverter.amountOne = amount;
-    return this.currencyConverter.convert();
+  newConvert(amount: number): string {
+    this.currencyConverter.amount = amount;
+    return this.currencyConverter.newConvert();
   }
 }
 
@@ -121,7 +165,26 @@ const toUSD = new CurrencyConverter(
 console.log(toEoro.convert());
 console.log(toUSD.convert());
 
-const toEoro2 = new CurrencyAdapter(usd, euro);
-const toUSD2 = new CurrencyAdapter(euro, usd);
-console.log(toEoro2.convert(100));
-console.log(toUSD2.convert(150));
+const toEoro2 = new NewCurrencyConverter(
+  100,
+  usd.exchangeRate,
+  euro.exchangeRate,
+  usd.symbol,
+  euro.symbol
+);
+
+const toUSD2 = new NewCurrencyConverter(
+  100,
+  euro.exchangeRate,
+  usd.exchangeRate,
+  euro.symbol,
+  usd.symbol
+);
+
+console.log(toEoro2.newConvert());
+console.log(toUSD2.newConvert());
+
+const toEoro3 = new CurrencyAdapter(usd, euro);
+const toUSD3 = new CurrencyAdapter(euro, usd);
+console.log(toEoro3.newConvert(100));
+console.log(toUSD3.newConvert(100));
